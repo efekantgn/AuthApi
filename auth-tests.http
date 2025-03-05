@@ -1,0 +1,50 @@
+@baseUrl = http://localhost:5296
+@email = admin@example.com
+@password = 123456
+
+### Kayıt Ol
+POST {{baseUrl}}/api/Auth/register
+Content-Type: application/json
+
+{
+    "email": "{{email}}",
+    "password": "{{password}}"
+}
+
+### Giriş Yap
+# @name login
+POST {{baseUrl}}/api/Auth/login
+Content-Type: application/json
+
+{
+    "email": "{{email}}",
+    "password": "{{password}}"
+}
+
+### Token'ı değişkene kaydet
+@authToken = {{login.response.body.token}}
+
+### Kullanıcı Bilgilerini Getir
+GET {{baseUrl}}/api/Auth/me
+Authorization: Bearer {{authToken}}
+
+### Hatalı Şifre ile Giriş Denemesi
+POST {{baseUrl}}/api/Auth/login
+Content-Type: application/json
+
+{
+    "email": "{{email}}",
+    "password": "yanlisşifre123"
+}
+
+### Geçersiz Email ile Giriş Denemesi
+POST {{baseUrl}}/api/Auth/login
+Content-Type: application/json
+
+{
+    "email": "olmayan@email.com",
+    "password": "{{password}}"
+}
+
+### Token Olmadan Kullanıcı Bilgisi İsteme
+GET {{baseUrl}}/api/Auth/me 
