@@ -1,0 +1,41 @@
+POST http://localhost:5296/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "user2@example.com",
+  "password": "123456",
+  "role": "User"
+}
+
+### Kullanıcı Giriş
+POST http://localhost:5296/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "user2@example.com",
+    "password": "123456"
+}
+###
+GET http://localhost:5296/api/auth/isAuthanticated
+Authorization: Bearer RR9P4DIWC8sly97twbWlOzUuzbTxdO/4eyHIWzLx6cycwqm/NxyjPqwbd+/N8pNvkCUqcSwY6n/EIsiyeZR0Ig==
+
+###
+GET http://localhost:5296/api/auth/admin-only
+Authorization: Bearer 
+
+###
+POST  http://localhost:5296/api/auth/refresh-token
+Content-Type: application/json
+
+{
+    "userId": 2,
+    "refreshToken": "RR9P4DIWC8sly97twbWlOzUuzbTxdO/4eyHIWzLx6cycwqm/NxyjPqwbd+/N8pNvkCUqcSwY6n/EIsiyeZR0Ig=="
+}
+###
+POST  http://localhost:5296/api/auth/logout
+Content-Type: application/json
+
+{
+    "userId": 1,
+    "refreshToken": "RR9P4DIWC8sly97twbWlOzUuzbTxdO/4eyHIWzLx6cycwqm/NxyjPqwbd+/N8pNvkCUqcSwY6n/EIsiyeZR0Ig=="
+}
