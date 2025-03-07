@@ -11,16 +11,30 @@ using System.Text;
 
 namespace AuthAPI.Services;
 
+/// <summary>
+/// Kimlik doğrulama ve yetkilendirme işlemlerini yöneten servis sınıfı
+/// </summary>
 public class AuthService
 {
     private readonly AuthDbContext _context;
     private readonly IConfiguration _configuration;
+
+    /// <summary>
+    /// AuthService sınıfının yapıcı metodu
+    /// </summary>
+    /// <param name="dbContext">Veritabanı bağlam nesnesi</param>
+    /// <param name="configuration">Uygulama yapılandırma nesnesi</param>
     public AuthService(AuthDbContext dbContext, IConfiguration configuration)
     {
         _context = dbContext;
         _configuration = configuration;
     }
 
+    /// <summary>
+    /// Yeni bir kullanıcı kaydı oluşturur
+    /// </summary>
+    /// <param name="request">Kayıt isteği bilgileri</param>
+    /// <returns>Kayıt işleminin başarılı olup olmadığını belirten boolean değer</returns>
     public async Task<bool> RegisterAsync(RegisterRequest request)
     {
         if (await _context.Users.AnyAsync(u => u.Email == request.Email))
@@ -41,6 +55,13 @@ public class AuthService
         return true;
     }
 
+    /// <summary>
+    /// Kullanıcı girişi yapar ve token oluşturur
+    /// </summary>
+    /// <param name="request">Giriş isteği bilgileri</param>
+    /// <returns>JWT token ve yenileme token'ını içeren TokenResponse nesnesi</returns>
+    /// <exception cref="ArgumentException">Geçersiz giriş bilgileri durumunda fırlatılır</exception>
+    /// <exception cref="UnauthorizedAccessException">Kimlik doğrulama başarısız olduğunda fırlatılır</exception>
     public async Task<TokenResponse> LoginAsync(LoginRequest request)
     {
         if (request == null || string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
@@ -59,6 +80,11 @@ public class AuthService
         return response;
     }
 
+    /// <summary>
+    /// Kullanıcı için token yanıtı oluşturur
+    /// </summary>
+    /// <param name="user">Token oluşturulacak kullanıcı</param>
+    /// <returns>JWT token ve yenileme token'ını içeren TokenResponse nesnesi</returns>
     private async Task<TokenResponse> CreateTokenResponse(User user)
     {
         return new()
@@ -68,6 +94,10 @@ public class AuthService
         };
     }
 
+    /// <summary>
+    /// Sistemdeki tüm kullanıcıların e-posta adreslerini listeler
+    /// </summary>
+    /// <returns>Kullanıcı e-posta adreslerini içeren liste</returns>
     public async Task<List<string>> GetUsers()
     {
         return await _context.Users
@@ -75,6 +105,12 @@ public class AuthService
                 .AsNoTracking()
                 .ToListAsync();
     }
+
+    /// <summary>
+    /// Yenileme token'ı kullanarak yeni bir JWT token oluşturur
+    /// </summary>
+    /// <param name="request">Yenileme token isteği bilgileri</param>
+    /// <returns>Yeni JWT token ve yenileme token'ını içeren TokenResponse nesnesi veya null</returns>
     public async Task<TokenResponse?> RefreshTokenAsync(RefreshTokenRequest request)
     {
         var user = await ValidateRefreshTokenAsync(request.UserId, request.RefreshToken);
@@ -84,6 +120,13 @@ public class AuthService
 
         return await CreateTokenResponse(user);
     }
+
+    /// <summary>
+    /// Kullanıcı oturumunu sonlandırır
+    /// </summary>
+    /// <param name="userId">Kullanıcı kimlik numarası</param>
+    /// <param name="refreshToken">Kullanıcının yenileme token'ı</param>
+    /// <returns>Oturumu sonlandırılan kullanıcı nesnesi veya null</returns>
     public async Task<User?> LogOutAsync(int userId, string refreshToken)
     {
         var user = await _context.Users.FirstOrDefaultAsync(user => user.Id == userId);
@@ -98,6 +141,13 @@ public class AuthService
         await _context.SaveChangesAsync();
         return user;
     }
+
+    /// <summary>
+    /// Yenileme token'ının geçerliliğini doğrular
+    /// </summary>
+    /// <param name="UserId">Kullanıcı kimlik numarası</param>
+    /// <param name="refreshToken">Doğrulanacak yenileme token'ı</param>
+    /// <returns>Doğrulama başarılı ise kullanıcı nesnesi, değilse null</returns>
     private async Task<User?> ValidateRefreshTokenAsync(int UserId, string refreshToken)
     {
         var user = await _context.Users.FindAsync(UserId);
@@ -109,6 +159,12 @@ public class AuthService
         }
         return user;
     }
+
+    /// <summary>
+    /// Kullanıcı için JWT token oluşturur
+    /// </summary>
+    /// <param name="user">Token oluşturulacak kullanıcı</param>
+    /// <returns>Oluşturulan JWT token string'i</returns>
     private string GenerateJwtToken(User user)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
@@ -130,11 +186,21 @@ public class AuthService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
+    /// <summary>
+    /// Yeni bir yenileme token'ı oluşturur
+    /// </summary>
+    /// <returns>Oluşturulan yenileme token'ı</returns>
     private string GenerateRefreshToken()
     {
         return Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)); // 64 byte'lık random token
     }
 
+    /// <summary>
+    /// Kullanıcı için yeni bir yenileme token'ı oluşturur ve kaydeder
+    /// </summary>
+    /// <param name="user">Token oluşturulacak kullanıcı</param>
+    /// <returns>Oluşturulan yenileme token'ı</returns>
     private async Task<string> GenerateAndSaveRefreshTokenAsync(User user)
     {
         var refreshToken = GenerateRefreshToken();
