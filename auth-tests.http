@@ -1,5 +1,5 @@
-@baseUrl = http://localhost:5296
-@email = admin@example.com
+@baseUrl = http://localhost:8080
+@email = efekan@example.com
 @password = 123456
 
 ### Kayıt Ol

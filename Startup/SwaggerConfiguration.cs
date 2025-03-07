@@ -1,8 +1,15 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
+/// <summary>
+/// Swagger/OpenAPI yapılandırma sınıfı
+/// </summary>
 public static class SwaggerConfiguration
 {
+    /// <summary>
+    /// Swagger servislerini yapılandırır
+    /// </summary>
+    /// <param name="services">Servis koleksiyonu</param>
     public static void ConfigureSwagger(this IServiceCollection services)
     {
         services.AddSwaggerGen(c =>
@@ -24,6 +31,10 @@ public static class SwaggerConfiguration
         });
     }
 
+    /// <summary>
+    /// Swagger JWT kimlik doğrulama yapılandırmasını gerçekleştirir
+    /// </summary>
+    /// <param name="c">Swagger yapılandırma seçenekleri</param>
     private static void ConfigureSwaggerJwtAuth(SwaggerGenOptions c)
     {
         c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
