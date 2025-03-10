@@ -1,6 +1,7 @@
-@baseUrl = http://localhost:8080
-@email = efekan@example.com
+@baseUrl = http://localhost:5000
+@email = admin@example.com
 @password = 123456
+@role = admin
 
 ### Kayıt Ol
 POST {{baseUrl}}/api/Auth/register
@@ -8,7 +9,8 @@ Content-Type: application/json
 
 {
     "email": "{{email}}",
-    "password": "{{password}}"
+    "password": "{{password}}",
+    "role": "{{role}}"
 }
 
 ### Giriş Yap

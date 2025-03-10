@@ -1,13 +1,15 @@
+version: "3.8"
 services:
-  api:
+  auth_api:
     build: .
-    container_name: auth_api
     ports:
       - "5000:5000"
+    volumes:
+      - sqlite_data:/app/db
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
-    volumes:
-      - sqlite_data:/app/Data
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__Auth=Data Source=/app/db/auth.db
 
 volumes:
   sqlite_data:
