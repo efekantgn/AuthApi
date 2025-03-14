@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:5000
-@email = admin@example.com
+@email = admin2@example.com
 @password = 123456
 @role = admin
 
@@ -24,11 +24,8 @@ Content-Type: application/json
 }
 
 ### Token'ı değişkene kaydet
-@authToken = {{login.response.body.token}}
-
-### Kullanıcı Bilgilerini Getir
-GET {{baseUrl}}/api/Auth/me
-Authorization: Bearer {{authToken}}
+@accesToken = {{login.response.body.accesToken}}
+@refreshToken = {{login.response.body.refreshToken}}
 
 ### Hatalı Şifre ile Giriş Denemesi
 POST {{baseUrl}}/api/Auth/login

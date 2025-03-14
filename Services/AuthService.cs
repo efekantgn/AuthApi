@@ -44,6 +44,7 @@ public class AuthService
 
         User user = new()
         {
+            Id = Guid.NewGuid(),
             Email = request.Email,
             PasswordHash = passwordHash,
             Role = request.Role
@@ -127,7 +128,7 @@ public class AuthService
     /// <param name="userId">Kullanıcı kimlik numarası</param>
     /// <param name="refreshToken">Kullanıcının yenileme token'ı</param>
     /// <returns>Oturumu sonlandırılan kullanıcı nesnesi veya null</returns>
-    public async Task<User?> LogOutAsync(int userId, string refreshToken)
+    public async Task<User?> LogOutAsync(Guid userId, string refreshToken)
     {
         var user = await _context.Users.FirstOrDefaultAsync(user => user.Id == userId);
 

@@ -11,7 +11,7 @@ public class User
     /// <summary>
     /// Kullanıcının benzersiz kimlik numarası
     /// </summary>
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     /// <summary>
     /// Kullanıcının e-posta adresi (giriş için kullanılır)

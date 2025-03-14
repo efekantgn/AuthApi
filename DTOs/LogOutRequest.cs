@@ -10,7 +10,7 @@ public class LogOutRequest
     /// <summary>
     /// Çıkış yapacak kullanıcının ID'si
     /// </summary>
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
     /// <summary>
     /// Kullanıcının yenileme token'ı
